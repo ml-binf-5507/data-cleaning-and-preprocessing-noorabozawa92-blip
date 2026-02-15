@@ -90,7 +90,7 @@ def detect_feature_types(df: pd.DataFrame, target: str, id_cols: List[str]) -> T
     feature_cols = [c for c in df.columns if c not in id_cols and c != target]
     cat_cols = [c for c in feature_cols if df[c].dtype == 'object']
     num_cols = [c for c in feature_cols if df[c].dtype in ['int64', 'float64']]
-    Return (cat_cols, num_cols)
+    return (cat_cols, num_cols)
     
 
 
