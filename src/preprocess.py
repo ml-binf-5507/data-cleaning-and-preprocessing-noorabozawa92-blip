@@ -85,7 +85,13 @@ def detect_feature_types(df: pd.DataFrame, target: str, id_cols: List[str]) -> T
     # 3. Identify numeric columns (dtype in [int, float]):
     #    num_cols = [c for c in feature_cols if df[c].dtype in ['int64', 'float64']]
     # 4. Return (cat_cols, num_cols)
-    pass
+    
+
+    feature_cols = [c for c in df.columns if c not in id_cols and c != target]
+    cat_cols = [c for c in feature_cols if df[c].dtype == 'object']
+    num_cols = [c for c in feature_cols if df[c].dtype in ['int64', 'float64']]
+    Return (cat_cols, num_cols)
+    
 
 
 # ============================================================================
@@ -121,7 +127,15 @@ def encode_categorical(df: pd.DataFrame, cat_cols: List[str]) -> Tuple[pd.DataFr
     # HINT: When called in run_preprocessing(), you encode TRAIN first to get column names,
     # then when encoding TEST, you should only create those same columns (don't add new ones).
     # You can use pd.get_dummies(..., columns=...) or post-process to match columns.
-    pass
+    
+df = df.copy()
+    encoded_column_names = []
+    for col in cat_cols:
+        encoded = d.get_dummies(df[col], prefix=col, dtype=int)
+        encoded_column_names.extend(encoded.columns.tolist())
+        df.drop(col, axis=1, inplace=True)
+        f = pd.concat([df, encoded], axis=1)
+    return df, encoded_column_names
 
 
 # ============================================================================
@@ -148,7 +162,26 @@ def scale_numeric(df: pd.DataFrame, num_cols: List[str]) -> Tuple[pd.DataFrame, 
     #    b. Calculate mean and std: mean = col.mean(), std = col.std()
     #    c. Standardize: (col - mean) / std
     # 3. Return (scaled_df, means_dict, stds_dict)
-    pass
+
+df = df.copy()
+    means_dict: Dict[str, float] = {}
+    stds_dict: Dict[str, float] ={}
+    for col in num_cols:
+        if col not in df.columns:
+            continue
+df[col].fillna(df[col].median()
+        mean = df[col].mean()
+        std = df[col].std()
+        means_dict[col] = float(mean)
+        if std == 0 or np.isnan(std):
+            stds_dict[col] = 1.0
+            df[col] = df[col] - mean
+        else:
+            stds_dict[col] =float(std)
+            df[col] = (df[col] - mean) / std
+
+    return df, means_dict, stds_dict
+                
 
 
 # ============================================================================
